@@ -11,18 +11,17 @@ function ToDoList() {
       setTasks(saved);
     };
     loadTasks();
-  });
+  }, []);
 
   const handleAdd = async () => {
     const trimmed = inputValue.trim();
-    if (!trimmed) return; // stops blank tasks from being added
-    setInputValue("");
+    if (!trimmed) return;
     const newTask = {
-      id: tasks.length + 1,
+      id: crypto.randomUUID(),
       name: trimmed,
     };
     await addTask(newTask);
-    setTasks((tasks) => [...tasks, newTask]);
+    setTasks((prev) => [...prev, newTask]);
     setInputValue("");
   };
 
