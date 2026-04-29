@@ -1,23 +1,33 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { getAllTasks, addTask, deleteTask } from "../database";
 
 function ToDoList() {
   const [inputValue, setInputValue] = useState("");
   const [tasks, setTasks] = useState([]);
 
-  const handleAdd = () => {
+  useEffect(() => {
+    const loadTasks = async () => {
+      const saved = await getAllTasks();
+      setTasks(saved);
+    };
+    loadTasks();
+  });
+
+  const handleAdd = async () => {
     const trimmed = inputValue.trim();
     if (!trimmed) return; // stops blank tasks from being added
     setInputValue("");
-    setTasks((tasks) => [
-      ...tasks,
-      {
-        id: tasks.length + 1,
-        name: trimmed,
-      },
-    ]);
+    const newTask = {
+      id: tasks.length + 1,
+      name: trimmed,
+    };
+    await addTask(newTask);
+    setTasks((tasks) => [...tasks, newTask]);
+    setInputValue("");
   };
 
-  const deleteTask = (id) => {
+  const handleDelete = async (id) => {
+    await deleteTask(id);
     setTasks((tasks) => tasks.filter((task) => task.id !== id));
   };
 
@@ -29,14 +39,15 @@ function ToDoList() {
         type='text'
         placeholder='Enter Task'
         onChange={(e) => setInputValue(e.target.value)}
-      ></input>
+        onKeyDown={(e) => e.key === "Enter" && handleAdd()}
+      />
       <button onClick={handleAdd}>Add</button>
       <h3>Current Tasks</h3>
       <ul>
         {tasks.map((task) => (
           <li key={task.id}>
             <p>{task.name}</p>
-            <button onClick={() => deleteTask(task.id)}>X</button>
+            <button onClick={() => handleDelete(task.id)}>X</button>
           </li>
         ))}
       </ul>
