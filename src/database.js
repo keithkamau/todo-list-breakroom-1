@@ -23,7 +23,7 @@ export const getAllTasks = async () => {
 
 export const addTask = async (task) => {
   const db = await getDB();
-  return db.transaction(STORE_NAME, task);
+  return db.add(STORE_NAME, task);
 };
 
 export const deleteTask = async (id) => {

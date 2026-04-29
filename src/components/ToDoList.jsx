@@ -16,18 +16,16 @@ function ToDoList() {
   const handleAdd = async () => {
     const trimmed = inputValue.trim();
     if (!trimmed) return;
-    const newTask = {
-      id: crypto.randomUUID(),
-      name: trimmed,
-    };
-    await addTask(newTask);
-    setTasks((prev) => [...prev, newTask]);
+    await addTask({ name: trimmed });
+    const updated = await getAllTasks();
+    setTasks(updated);
     setInputValue("");
   };
 
   const handleDelete = async (id) => {
     await deleteTask(id);
-    setTasks((tasks) => tasks.filter((task) => task.id !== id));
+    const updated = await getAllTasks();
+    setTasks(updated);
   };
 
   return (
